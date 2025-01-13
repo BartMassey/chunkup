@@ -45,18 +45,49 @@ impl<I: Iterator + Sized> ChunkUpExt<I> for I {
 }
 
 #[test]
-fn test_chunk_up() {
+fn test_chunk_up_str() {
     let tests = [
-        ("", ""),
-        ("x", "x"),
-        ("xxxxx", "xxxxx"),
-        ("hello_world", "hello _worl d"),
+        (1, "", ""),
+        (1, "x", "x"),
+        (1, "xx", "x x"),
+        (1, "xxx", "x x x"),
+        (5, "", ""),
+        (5, "x", "x"),
+        (5, "xxxxx", "xxxxx"),
+        (5, "hello_world", "hello _worl d"),
     ];
-    for (src, target) in tests {
+    for (n, src, target) in tests {
         let chunked: String = src
             .chars()
-            .chunk_up(5, ' ')
+            .chunk_up(n, ' ')
             .collect();
         assert_eq!(target, &chunked);
     }
+}
+
+#[test]
+fn test_chunk_up_trid() {
+    #[derive(Clone, Debug, PartialEq)]
+    enum Trid { X, S }
+    use Trid::*;
+
+    let tests = [
+        (1, [].as_ref(), [].as_ref()),
+        (1, &[X], &[X]),
+        (1, &[X, X], &[X, S, X]),
+    ];
+    for (n, src, target) in tests {
+        let chunked: Vec<Trid> = src
+            .iter()
+            .cloned()
+            .chunk_up(n, S)
+            .collect();
+        assert_eq!(target, &chunked);
+    }
+}
+
+#[test]
+#[should_panic]
+fn test_chunk_up_0() {
+    let _ = (1..3).chunk_up(0, 0).nth(0);
 }
