@@ -38,9 +38,17 @@ impl<I: Iterator + Sized> ChunkUpExt<I> for I {
 
 #[test]
 fn test_chunk_up() {
-    let chunked: String = "hello_world"
-        .chars()
-        .chunk_up(5, ' ')
-        .collect();
-    assert_eq!(&chunked, "hello _worl d");
+    let tests = [
+        ("", ""),
+        ("x", "x"),
+        ("xxxxx", "xxxxx"),
+        ("hello_world", "hello _worl d"),
+    ];
+    for (src, target) in tests {
+        let chunked: String = src
+            .chars()
+            .chunk_up(5, ' ')
+            .collect();
+        assert_eq!(target, &chunked);
+    }
 }
