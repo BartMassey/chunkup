@@ -3,11 +3,13 @@ pub struct ChunkUp<I: Iterator> {
     count: usize,
     separator: I::Item,
     source: I,
+    saved: Option<I::Item>,
 }
 
 impl<I: Iterator + Sized> ChunkUp<I> {
     fn new(source: I, size: usize, separator: I::Item) -> Self {
-        ChunkUp { size, count: 0, separator, source }
+        assert!(size > 0, "chunk size must be positive");
+        ChunkUp { size, count: 0, separator, source, saved: None }
     }
 }
 
@@ -17,12 +19,18 @@ where I::Item: Clone
     type Item = I::Item;
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.count += 1;
-        if self.count > self.size {
+        if let Some(result) = self.saved.take() {
+            self.count += 1;
+            return Some(result);
+        }
+        let next = self.source.next()?;
+        if self.count >= self.size.into() {
             self.count = 0;
+            self.saved = Some(next);
             return Some(self.separator.clone());
         }
-        self.source.next()
+        self.count += 1;
+        Some(next)
     }
 }
 
