@@ -35,12 +35,12 @@ where I::Item: Clone
 }
 
 pub trait ChunkUpExt<I: Iterator + Sized> : Iterator + Sized {
-    fn chunk_up(self, count: usize, separator: I::Item) -> ChunkUp<Self>;
+    fn chunk_up(self, size: usize, separator: I::Item) -> ChunkUp<Self>;
 }
 
 impl<I: Iterator + Sized> ChunkUpExt<I> for I {
-    fn chunk_up(self, count: usize, separator: I::Item) -> ChunkUp<Self> {
-        ChunkUp::new(self, count, separator)
+    fn chunk_up(self, size: usize, separator: I::Item) -> ChunkUp<Self> {
+        ChunkUp::new(self, size, separator)
     }
 }
 
