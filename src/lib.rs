@@ -6,14 +6,14 @@ pub struct ChunkUp<I: Iterator> {
     saved: Option<I::Item>,
 }
 
-impl<I: Iterator + Sized> ChunkUp<I> {
+impl<I: Iterator> ChunkUp<I> {
     fn new(source: I, size: usize, separator: I::Item) -> Self {
         assert!(size > 0, "chunk size must be positive");
         ChunkUp { size, count: 0, separator, source, saved: None }
     }
 }
 
-impl<I: Iterator + Sized> Iterator for ChunkUp<I>
+impl<I: Iterator> Iterator for ChunkUp<I>
 where I::Item: Clone
 {
     type Item = I::Item;
@@ -34,11 +34,11 @@ where I::Item: Clone
     }
 }
 
-pub trait ChunkUpExt<I: Iterator + Sized> : Iterator + Sized {
+pub trait ChunkUpExt<I: Iterator> : Iterator + Sized {
     fn chunk_up(self, size: usize, separator: I::Item) -> ChunkUp<Self>;
 }
 
-impl<I: Iterator + Sized> ChunkUpExt<I> for I {
+impl<I: Iterator> ChunkUpExt<I> for I {
     fn chunk_up(self, size: usize, separator: I::Item) -> ChunkUp<Self> {
         ChunkUp::new(self, size, separator)
     }
